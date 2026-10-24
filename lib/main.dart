@@ -51,7 +51,7 @@ class _DrumScreenState extends State<DrumScreen> {
     if (cameras.isEmpty) return;
 
     CameraDescription frontCamera = cameras.firstWhere(
-      (camera) => camera.lensDirection == CameraDirection.front,
+      (CameraDescription camera) => camera.lensDirection == CameraLensDirection.front,
       orElse: () => cameras.first,
     );
 

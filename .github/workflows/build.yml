@@ -35,19 +35,12 @@ jobs:
         run: |
           cp temp_backup/main.dart lib/main.dart
 
-      - name: Configure Android SDK via Python
+      - name: Configure Android SDK versions
         run: |
-          python3 -c '
-          import re
-          path = "android/app/build.gradle"
-          with open(path, "r") as f:
-              content = f.read()
-          content = re.sub(r"minSdkVersion\s+.*", "minSdkVersion 21", content)
-          content = re.sub(r"compileSdkVersion\s+.*", "compileSdkVersion 34", content)
-          content = re.sub(r"targetSdkVersion\s+.*", "targetSdkVersion 34", content)
-          with open(path, "w") as f:
-              f.write(content)
-          '
+          PROPERTIES_FILE="android/gradle.properties"
+          echo "flutter.minSdkVersion=21" >> $PROPERTIES_FILE
+          echo "flutter.compileSdkVersion=34" >> $PROPERTIES_FILE
+          echo "flutter.targetSdkVersion=34" >> $PROPERTIES_FILE
 
       - name: Install Dependencies
         run: flutter pub get

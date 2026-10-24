@@ -1,5 +1,5 @@
 name: air_drum_app
-description: Um app de bateria eletrônica por movimentos usando a câmera frontal.
+description: "A new Flutter project."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,9 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  camera: ^0.10.5+9                  # Para aceder à câmara frontal
-  audioplayers: ^6.0.0               # Para tocar os sons de bateria
-  google_mobile_ads: ^5.1.0          # Para monetizar com anúncios (AdMob)
+  camera: ^0.10.5+9
+  audioplayers: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -20,3 +19,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  

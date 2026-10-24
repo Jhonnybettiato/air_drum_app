@@ -35,12 +35,13 @@ jobs:
         run: |
           cp temp_backup/main.dart lib/main.dart
 
-      - name: Configure Android minSdk
+      - name: Configure Android SDK versions
         run: |
           BUILD_GRADLE="android/app/build.gradle"
           if [ -f "$BUILD_GRADLE" ]; then
-            sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' $BUILD_GRADLE
-            sed -i 's/minSdkVersion [0-9]*/minSdkVersion 21/g' $BUILD_GRADLE
+            sed -i 's/minSdkVersion.*/minSdkVersion 21/g' $BUILD_GRADLE
+            sed -i 's/compileSdkVersion.*/compileSdkVersion 34/g' $BUILD_GRADLE
+            sed -i 's/targetSdkVersion.*/targetSdkVersion 34/g' $BUILD_GRADLE
           fi
 
       - name: Install Dependencies

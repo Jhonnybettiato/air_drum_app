@@ -35,12 +35,23 @@ jobs:
         run: |
           cp temp_backup/main.dart lib/main.dart
 
-      - name: Configure Android SDK versions
+      - name: Fix Android Build Configuration
         run: |
-          PROPERTIES_FILE="android/gradle.properties"
-          echo "flutter.minSdkVersion=21" >> $PROPERTIES_FILE
-          echo "flutter.compileSdkVersion=34" >> $PROPERTIES_FILE
-          echo "flutter.targetSdkVersion=34" >> $PROPERTIES_FILE
+          python3 -c '
+          path = "android/app/build.gradle"
+          with open(path, "r") as f:
+              content = f.read()
+          
+          # Adiciona o namespace se não existir
+          if "namespace" not in content:
+              content = content.replace("android {", "android {\n    namespace \"com.example.air_drum_app\"")
+          
+          # Ajusta o minSdkVersion para 21
+          content = content.replace("minSdkVersion flutter.minSdkVersion", "minSdkVersion 21")
+          
+          with open(path, "w") as f:
+              f.write(content)
+          '
 
       - name: Install Dependencies
         run: flutter pub get

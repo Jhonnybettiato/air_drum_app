@@ -23,17 +23,19 @@ jobs:
           flutter-version: '3.19.x'
           channel: 'stable'
 
-      - name: Backup main.dart
+      - name: Backup Custom Files
         run: |
           mkdir -p temp_backup
           cp lib/main.dart temp_backup/main.dart
+          cp pubspec.yaml temp_backup/pubspec.yaml
 
       - name: Generate Android Platform Files
         run: flutter create . --platforms=android --project-name=air_drum_app --overwrite
 
-      - name: Restore main.dart
+      - name: Restore Custom Files
         run: |
           cp temp_backup/main.dart lib/main.dart
+          cp temp_backup/pubspec.yaml pubspec.yaml
 
       - name: Fix Android Build Configuration
         run: |
@@ -42,11 +44,9 @@ jobs:
           with open(path, "r") as f:
               content = f.read()
           
-          # Adiciona o namespace se não existir
           if "namespace" not in content:
               content = content.replace("android {", "android {\n    namespace \"com.example.air_drum_app\"")
           
-          # Ajusta o minSdkVersion para 21
           content = content.replace("minSdkVersion flutter.minSdkVersion", "minSdkVersion 21")
           
           with open(path, "w") as f:

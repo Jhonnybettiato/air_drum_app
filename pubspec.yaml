@@ -35,18 +35,20 @@ jobs:
         run: |
           cp temp_backup/main.dart lib/main.dart
 
-      - name: Set minSdk to 21
+      - name: Configure Android SDK versions
         run: |
-          BUILD_GRADLE="android/app/build.gradle"
-          if [ -f "$BUILD_GRADLE" ]; then
-            sed -i 's/minSdkVersion.*/minSdkVersion 21/g' $BUILD_GRADLE
+          PROPERTIES_FILE="android/gradle.properties"
+          if [ -f "$PROPERTIES_FILE" ]; then
+            echo "flutter.minSdkVersion=21" >> $PROPERTIES_FILE
+            echo "flutter.compileSdkVersion=34" >> $PROPERTIES_FILE
+            echo "flutter.targetSdkVersion=34" >> $PROPERTIES_FILE
           fi
 
       - name: Install Dependencies
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release --verbose
+        run: flutter build apk --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

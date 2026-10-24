@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 List<CameraDescription> cameras = [];
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  MobileAds.instance.initialize();
   
   try {
     cameras = await availableCameras();
@@ -43,14 +40,11 @@ class DrumScreen extends StatefulWidget {
 class _DrumScreenState extends State<DrumScreen> {
   CameraController? _controller;
   final AudioPlayer _audioPlayer = AudioPlayer();
-  BannerAd? _bannerAd;
-  bool _isAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _initCamera();
-    _loadBannerAd();
   }
 
   Future<void> _initCamera() async {
@@ -67,24 +61,6 @@ class _DrumScreenState extends State<DrumScreen> {
     setState(() {});
   }
 
-  void _loadBannerAd() {
-    _bannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _isAdLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-        },
-      ),
-    )..load();
-  }
-
   void _playSound(String drumType) async {
     debugPrint("Tocando bateria: $drumType");
   }
@@ -93,7 +69,6 @@ class _DrumScreenState extends State<DrumScreen> {
   void dispose() {
     _controller?.dispose();
     _audioPlayer.dispose();
-    _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -164,12 +139,6 @@ class _DrumScreenState extends State<DrumScreen> {
                   ],
                 ),
               ),
-              if (_isAdLoaded)
-                SizedBox(
-                  height: _bannerAd!.size.height.toDouble(),
-                  width: _bannerAd!.size.width.toDouble(),
-                  child: AdWidget(ad: _bannerAd!),
-                ),
             ],
           ),
         ],
@@ -177,4 +146,3 @@ class _DrumScreenState extends State<DrumScreen> {
     );
   }
 }
-

@@ -1,22 +1,55 @@
-name: air_drum_app
-description: "A new Flutter project."
-publish_to: 'none'
-version: 1.0.0+1
+name: Build Flutter APK
 
-environment:
-  sdk: '>=3.0.0 <4.0.0'
+on:
+  push:
+    branches: [ "main", "master" ]
 
-dependencies:
-  flutter:
-    sdk: flutter
-  camera: ^0.10.5+9
-  audioplayers: ^6.0.0
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.0
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '17'
 
-flutter:
-  uses-material-design: true
-  
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.x'
+          channel: 'stable'
+
+      - name: Backup main.dart
+        run: |
+          mkdir -p temp_backup
+          cp lib/main.dart temp_backup/main.dart
+
+      - name: Generate Android Platform Files
+        run: flutter create . --platforms=android --project-name=air_drum_app --overwrite
+
+      - name: Restore main.dart
+        run: |
+          cp temp_backup/main.dart lib/main.dart
+
+      - name: Set minSdk to 21
+        run: |
+          BUILD_GRADLE="android/app/build.gradle"
+          if [ -f "$BUILD_GRADLE" ]; then
+            sed -i 's/minSdkVersion.*/minSdkVersion 21/g' $BUILD_GRADLE
+          fi
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release --verbose
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/app-release.apk

@@ -48,6 +48,8 @@ jobs:
               content = content.replace("android {", "android {\n    namespace \"com.example.air_drum_app\"")
           
           content = content.replace("minSdkVersion flutter.minSdkVersion", "minSdkVersion 21")
+          content = content.replace("compileSdkVersion flutter.compileSdkVersion", "compileSdkVersion 35")
+          content = content.replace("targetSdkVersion flutter.targetSdkVersion", "targetSdkVersion 35")
           
           with open(path, "w") as f:
               f.write(content)

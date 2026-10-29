@@ -19,6 +19,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/sounds/hihat.mp3
-    - assets/sounds/snare.mp3

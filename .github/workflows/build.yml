@@ -30,35 +30,12 @@ jobs:
           cp pubspec.yaml temp_backup/pubspec.yaml
 
       - name: Generate Android Platform Files
-        run: flutter create . --platforms=android --project-name=air_drum_app --overwrite
+        run: flutter create . --platforms=android --org=com.example --project-name=air_drum_app --overwrite
 
       - name: Restore Custom Files
         run: |
           cp temp_backup/main.dart lib/main.dart
           cp temp_backup/pubspec.yaml pubspec.yaml
-
-      - name: Fix Android Build Configuration
-        run: |
-          python3 -c '
-          path = "android/app/build.gradle"
-          with open(path, "r") as f:
-              content = f.read()
-          
-          if "namespace" not in content:
-              content = content.replace("android {", "android {\n    namespace \"com.example.air_drum_app\"")
-          
-          # Substitui de forma segura mantendo a sintaxe exata do Gradle
-          content = content.replace("minSdkVersion flutter.minSdkVersion", "minSdkVersion 21")
-          content = content.replace("compileSdkVersion flutter.compileSdkVersion", "compileSdkVersion 34")
-          content = content.replace("targetSdkVersion flutter.targetSdkVersion", "targetSdkVersion 34")
-          
-          # Caso já venha com números fixos
-          content = content.replace("compileSdkVersion 35", "compileSdkVersion 34")
-          content = content.replace("targetSdkVersion 35", "targetSdkVersion 34")
-          
-          with open(path, "w") as f:
-              f.write(content)
-          '
 
       - name: Install Dependencies
         run: flutter pub get

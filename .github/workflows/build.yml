@@ -37,19 +37,28 @@ jobs:
           cp temp_backup/main.dart lib/main.dart
           cp temp_backup/pubspec.yaml pubspec.yaml
 
-      - name: Force Android SDK 34 and Namespace
+      - name: Fix Android Build Configuration
         run: |
-          BUILD_GRADLE="android/app/build.gradle"
+          python3 -c '
+          path = "android/app/build.gradle"
+          with open(path, "r") as f:
+              content = f.read()
           
-          # Adiciona o namespace se não existir
-          if ! grep -q "namespace" "$BUILD_GRADLE"; then
-            sed -i '/android {/a \    namespace "com.example.air_drum_app"' "$BUILD_GRADLE"
-          fi
+          if "namespace" not in content:
+              content = content.replace("android {", "android {\n    namespace \"com.example.air_drum_app\"")
           
-          # Força as versões para 34 de forma limpa
-          sed -i 's/minSdkVersion.*/minSdkVersion 21/g' "$BUILD_GRADLE"
-          sed -i 's/compileSdkVersion.*/compileSdkVersion 34/g' "$BUILD_GRADLE"
-          sed -i 's/targetSdkVersion.*/targetSdkVersion 34/g' "$BUILD_GRADLE"
+          # Substitui de forma segura mantendo a sintaxe exata do Gradle
+          content = content.replace("minSdkVersion flutter.minSdkVersion", "minSdkVersion 21")
+          content = content.replace("compileSdkVersion flutter.compileSdkVersion", "compileSdkVersion 34")
+          content = content.replace("targetSdkVersion flutter.targetSdkVersion", "targetSdkVersion 34")
+          
+          # Caso já venha com números fixos
+          content = content.replace("compileSdkVersion 35", "compileSdkVersion 34")
+          content = content.replace("targetSdkVersion 35", "targetSdkVersion 34")
+          
+          with open(path, "w") as f:
+              f.write(content)
+          '
 
       - name: Install Dependencies
         run: flutter pub get

@@ -37,23 +37,19 @@ jobs:
           cp temp_backup/main.dart lib/main.dart
           cp temp_backup/pubspec.yaml pubspec.yaml
 
-      - name: Fix Android Build Configuration
+      - name: Force Android SDK 34 and Namespace
         run: |
-          python3 -c '
-          path = "android/app/build.gradle"
-          with open(path, "r") as f:
-              content = f.read()
+          BUILD_GRADLE="android/app/build.gradle"
           
-          if "namespace" not in content:
-              content = content.replace("android {", "android {\n    namespace \"com.example.air_drum_app\"")
+          # Adiciona o namespace se não existir
+          if ! grep -q "namespace" "$BUILD_GRADLE"; then
+            sed -i '/android {/a \    namespace "com.example.air_drum_app"' "$BUILD_GRADLE"
+          fi
           
-          content = content.replace("minSdkVersion flutter.minSdkVersion", "minSdkVersion 21")
-          content = content.replace("compileSdkVersion flutter.compileSdkVersion", "compileSdkVersion 34")
-          content = content.replace("targetSdkVersion flutter.targetSdkVersion", "targetSdkVersion 34")
-          
-          with open(path, "w") as f:
-              f.write(content)
-          '
+          # Força as versões para 34 de forma limpa
+          sed -i 's/minSdkVersion.*/minSdkVersion 21/g' "$BUILD_GRADLE"
+          sed -i 's/compileSdkVersion.*/compileSdkVersion 34/g' "$BUILD_GRADLE"
+          sed -i 's/targetSdkVersion.*/targetSdkVersion 34/g' "$BUILD_GRADLE"
 
       - name: Install Dependencies
         run: flutter pub get

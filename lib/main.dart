@@ -61,17 +61,16 @@ class _DrumScreenState extends State<DrumScreen> {
     setState(() {});
   }
 
-  // Função para reproduzir o som real
-  Future<void> _playSound(String drumType) async {
-    try {
-      // Nota: Certifique-se de colocar os ficheiros de som em assets/sounds/ e declará-los no pubspec.yaml
-      // Exemplo: hihat.mp3 e snare.mp3
-      await _audioPlayer.stop(); // Para o som anterior para tocar imediatamente
-      await _audioPlayer.play(AssetSource('sounds/$drumType.mp3'));
-      debugPrint("Tocando bateria: $drumType");
-    } catch (e) {
-      debugPrint("Erro ao tocar áudio: $e");
-    }
+  void _playSound(BuildContext context, String drumType) {
+    debugPrint("Tocando bateria: $drumType");
+    
+    // Mostra um aviso visual imediato no ecrã ao tocar no pad
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("🥁 Tocou: ${drumType.toUpperCase()}!"),
+        duration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   @override
@@ -92,17 +91,15 @@ class _DrumScreenState extends State<DrumScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Câmara em fundo total
           SizedBox.expand(
             child: CameraPreview(_controller!),
           ),
-          // Interface por cima da câmara
           Column(
             children: [
               const Padding(
                 padding: EdgeInsets.only(top: 50.0),
                 child: Text(
-                  "Air Drum - Aponte para os Pads!",
+                  "Air Drum - Teste de Toque",
                   style: TextStyle(
                     fontSize: 18, 
                     fontWeight: FontWeight.bold, 
@@ -112,49 +109,38 @@ class _DrumScreenState extends State<DrumScreen> {
                 ),
               ),
               const Spacer(),
-              // Zona dos Pads (Prato e Caixa)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Hi-Hat (Prato)
                     GestureDetector(
-                      onTap: () => _playSound('hihat'),
+                      onTap: () => _playSound(context, 'Hi-Hat (Prato)'),
                       child: Container(
                         width: 130,
                         height: 130,
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.4),
+                          color: Colors.blue.withOpacity(0.5),
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.blueAccent, width: 3),
+                          border: Border.all(color: Colors.white, width: 3),
                         ),
                         child: const Center(
-                          child: Text(
-                            "Prato\n(Hi-Hat)", 
-                            textAlign: TextAlign.center, 
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
-                          ),
+                          child: Text("Prato\n(Hi-Hat)", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                         ),
                       ),
                     ),
-                    // Snare (Caixa)
                     GestureDetector(
-                      onTap: () => _playSound('snare'),
+                      onTap: () => _playSound(context, 'Snare (Caixa)'),
                       child: Container(
                         width: 130,
                         height: 130,
                         decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.4),
+                          color: Colors.red.withOpacity(0.5),
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.redAccent, width: 3),
+                          border: Border.all(color: Colors.white, width: 3),
                         ),
                         child: const Center(
-                          child: Text(
-                            "Caixa\n(Snare)", 
-                            textAlign: TextAlign.center, 
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
-                          ),
+                          child: Text("Caixa\n(Snare)", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                         ),
                       ),
                     ),

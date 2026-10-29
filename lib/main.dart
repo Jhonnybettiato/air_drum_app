@@ -64,11 +64,11 @@ class _DrumScreenState extends State<DrumScreen> {
   void _playSound(BuildContext context, String drumType) {
     debugPrint("Tocando bateria: $drumType");
     
-    // Mostra um aviso visual imediato no ecrã ao tocar no pad
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("🥁 Tocou: ${drumType.toUpperCase()}!"),
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 400),
       ),
     );
   }
